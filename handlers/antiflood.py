@@ -2,7 +2,7 @@
 Antiflood handler - prevent message flooding
 """
 from pyrogram import Client, filters
-from pyrogram.types import Message, ChatPermissions
+from pyrogram.types import Message
 from collections import defaultdict
 from database import ChatSettings, get_session
 from sqlalchemy import select
@@ -26,6 +26,7 @@ async def check_flood(chat_id: int, user_id: int, limit: int) -> bool:
     user_messages.append(now)
     
     return len(user_messages) > limit
+
 
 @Client.on_message(filters.group & filters.text)
 async def flood_handler(client: Client, message: Message):
@@ -55,6 +56,7 @@ async def flood_handler(client: Client, message: Message):
     if await check_flood(message.chat.id, message.from_user.id, limit):
         try:
             # Mute the user
+            from pyrogram.types import ChatPermissions
             await client.restrict_chat_member(
                 message.chat.id,
                 message.from_user.id,
@@ -111,6 +113,6 @@ async def antiflood_handler(client: Client, message: Message):
         
         status = "enabled" if settings.antiflood_enabled else "disabled"
         await message.reply(
-            f"✅ Antiflood {status}!\nLimit: {limit} messages per {FLOOD_TIME} seconds"
+            f"✅ AntiFlood {status}!\nLimit: {limit} messages per {FLOOD_TIME} seconds"
         )
         break

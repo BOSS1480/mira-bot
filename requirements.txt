@@ -1,5 +1,6 @@
 pyrogram>=2.0.0
 tgcrypto
 pyyaml
-sqlalchemy[asyncio]
+sqlalchemy
 aiosqlite
+apprise

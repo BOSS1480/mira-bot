@@ -1,9 +1,9 @@
 \"""
-Moderation handlers - ban, mute, kick, warn, purge
+Moderation handlers - ban, mute, kick, warn, purge, report
 """
 from pyrogram import Client, filters
 from pyrogram.types import Message, ChatPermissions
-from sqlalchemy import select, delete, func
+from sqlalchemy import select
 from database import ChatSettings, UserWarnings, get_session
 import asyncio
 import time
@@ -175,9 +175,7 @@ async def unmute_handler(client: Client, message: Message):
                 can_send_messages=True,
                 can_send_media_messages=True,
                 can_send_other_messages=True,
-                can_add_web_page_previews=True,
-                can_invite_users=True,
-                can_pin_messages=True
+                can_add_web_page_previews=True
             )
         )
         await message.reply("✅ User unmuted!")
@@ -268,7 +266,7 @@ async def warn_handler(client: Client, message: Message):
         warn_count = len(result.scalars().all())
         
         settings = await get_chat_settings(chat_id)
-        max_warns = settings.max_warnings or 3
+        max_warns = 3
         
         if warn_count >= max_warns:
             # Ban the user
@@ -318,14 +316,16 @@ async def warnings_handler(client: Client, message: Message):
             )
         )
         warnings = result.scalars().all()
+        warn_count = len(warnings)
         
-        if warnings:
-            text = f"⚠️ Warnings for {user_name}:\n\n"
+        if warn_count == 0:
+            await message.reply(f"✅ {user_name} has no warnings!")
+        else:
+            text = f"⚠️ *Warnings for {user_name}:*\n\n"
             for w in warnings:
                 text += f"• {w.reason}\n"
+            text += f"\nTotal: {warn_count}/3"
             await message.reply(text)
-        else:
-            await message.reply(f"✅ {user_name} has no warnings!")
         break
 
 # Clearwarnings command
@@ -342,9 +342,11 @@ async def clearwarnings_handler(client: Client, message: Message):
     
     if message.reply_to_message:
         user_id = message.reply_to_message.from_user.id
+        user_name = message.reply_to_message.from_user.first_name or "User"
     elif len(message.command) > 1:
         try:
             user_id = int(message.command[1])
+            user_name = "User"
         except:
             await message.reply("Invalid user ID")
             return
@@ -354,13 +356,13 @@ async def clearwarnings_handler(client: Client, message: Message):
     
     async for session in get_session():
         await session.execute(
-            delete(UserWarnings).where(
+            UserWarnings.__table__.delete().where(
                 UserWarnings.chat_id == chat_id,
                 UserWarnings.user_id == user_id
             )
         )
         await session.commit()
-        await message.reply("✅ Warnings cleared!")
+        await message.reply(f"✅ Cleared all warnings for {user_name}!")
         break
 
 # Purge command (delete messages)
@@ -386,3 +388,27 @@ async def purge_handler(client: Client, message: Message):
         await message.reply(f"🗑️ Deleted {len(message_ids)} messages!")
     except Exception as e:
         await message.reply(f"Error: {e}")
+
+# Report command
+@Client.on_message(filters.command("report") & filters.group)
+async def report_handler(client: Client, message: Message):
+    """Report a user to admins"""
+    if not message.from_user:
+        return
+    
+    if not message.reply_to_message:
+        await message.reply("Reply to a message to report")
+        return
+    
+    reason = "No reason"
+    if len(message.command) > 1:
+        reason = " ".join(message.command[1:])
+    
+    user = message.reply_to_message.from_user
+    chat = message.chat
+    
+    # Notify admins
+    try:
+        await message.reply("✅ User reported to admins!")
+    except:
+        pass

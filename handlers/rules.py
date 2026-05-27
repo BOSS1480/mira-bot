@@ -21,7 +21,7 @@ async def rules_handler(client: Client, message: Message):
         if settings and settings.rules_text:
             await message.reply(f"📜 *Rules:*\n\n{settings.rules_text}")
         else:
-            await message.reply("📜 No rules set yet!\n\nAdmins can set rules with /setrules")
+            await message.reply("No rules set yet!")
         break
 
 # Set rules command
@@ -57,5 +57,5 @@ async def set_rules_handler(client: Client, message: Message):
             settings.rules_text = rules_text
         
         await session.commit()
-        await message.reply("✅ Rules updated!\n\n" + rules_text)
+        await message.reply("✅ Rules updated!")
         break

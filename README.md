@@ -1,79 +1,125 @@
-# Mira Bot - MissRose Clone
+# 🤖 Mira Bot
 
-A powerful Telegram group management bot inspired by MissRose.
+A powerful Telegram group management bot inspired by **MissRose**.
 
-## Features
+## ✨ Features
 
-### Moderation
+### 🔧 Moderation
 - **Ban/Unban** - Ban or unban users from the group
-- **Kick** - Remove a user from the group
+- **Kick** - Remove users from the group
 - **Mute/Unmute** - Mute or unmute users temporarily
 - **Warn/Warnings** - Warn users and track violations
 - **Purge** - Delete multiple messages at once
+- **Report** - Report users to admins
 
-### Protection
-- **Antiflood** - Prevent message flooding
-- **AntiRaid** - Protect against mass join attacks
-- **CAPTCHA** - Verify new members
+### 🛡️ Protection
+- **AntiFlood** - Prevent message flooding
+- **AntiRaid** - Protect against raid attacks
+- **Blocklist** - Auto-delete messages with blocked words
 
-### Group Management
-- **Welcome/Goodbye** - Custom welcome and goodbye messages
-- **Rules** - Set and display group rules
-- **Filters** - Auto-respond to keywords
-- **Blocklist** - Block certain words
-- **Notes** - Save notes for users
+### 👋 Welcome/Goodbye
+- **Welcome Messages** - Customizable welcome for new members
+- **Goodbye Messages** - Customizable goodbye when members leave
+- **Placeholders**: `{first}`, `{last}`, `{fullname}`, `{username}`, `{chatname}`, `{userid}`, `{rules}`
 
-### Additional
-- **Staff** - Manage group staff
-- **Promote/Demote** - Add or remove admins
-- **Settings** - Configure bot behavior
-- **Multiple Languages** - Support for 30+ languages
+### 🔍 Filters
+- **Auto-replies** - Respond to specific keywords
+- **Blocklist** - Block specific words/phrases
 
-## Commands
+### 📜 Rules
+- **Set Rules** - Define group rules
+- **View Rules** - Display rules to users
+- **Send Rules** - Send rules privately to users
 
-### Basic
-- `/start` - Start the bot
-- `/help` - Show help menu
-- `/id` - Get chat/user ID
+### 📝 Notes
+- **Add Notes** - Save useful information
+- **List Notes** - View all notes
+- **Get Notes** - Retrieve specific notes
 
-### Moderation
-- `/ban` - Ban a user
-- `/unban` - Unban a user
-- `/kick` - Kick a user
-- `/mute` - Mute a user
-- `/unmute` - Unmute a user
-- `/warn` - Warn a user
-- `/warnings` - Check user warnings
-- `/clearwarnings` - Clear warnings
-- `/purge` - Delete messages
+### 👥 Staff Management
+- **Promote** - Make users admins
+- **Demote** - Remove admin rights
+- **Staff List** - View all admins
 
-### Settings
-- `/antiflood` - Toggle antiflood
-- `/welcome` - Set welcome message
-- `/goodbye` - Set goodbye message
-- `/setrules` - Set group rules
-- `/addfilter` - Add a filter
-- `/rmfilter` - Remove a filter
-- `/setlang` - Change language
+### ⚙️ Settings
+- **Connection** - Connect private chat with bot
+- **Language** - Change bot language (30+ languages)
+- **Settings** - Configure various options
 
-## Installation
+### 📋 Additional
+- **ID** - Get chat/user ID
+- **Info** - Get user information
+- **Pin/Unpin** - Pin messages
+- **Polls** - Create polls
+
+## 🚀 Deployment
+
+### Prerequisites
+- Python 3.10+
+- Telegram Bot Token
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/BOSS1480/mira-bot.git
+cd mira-bot
+
 # Install dependencies
 pip install -r requirements.txt
 
 # Configure bot
-Edit config.py and add your BOT_TOKEN
+cp .env.example .env
+# Edit .env with your bot token
 
 # Run the bot
 python bot.py
 ```
 
-## Requirements
-- Python 3.8+
-- pyrogram
-- tgcrypto
-- aiosqlite
+## 📚 Commands
 
-## License
+| Command | Description |
+|---------|-------------|
+| `/start` | Start the bot |
+| `/help` | Show help menu |
+| `/id` | Get chat/user ID |
+| `/ban` | Ban a user |
+| `/unban` | Unban a user |
+| `/mute` | Mute a user |
+| `/unmute` | Unmute a user |
+| `/kick` | Kick a user |
+| `/warn` | Warn a user |
+| `/warnings` | Check user warnings |
+| `/clearwarnings` | Clear user warnings |
+| `/purge` | Delete messages |
+| `/welcome` | Set welcome message |
+| `/goodbye` | Set goodbye message |
+| `/antiflood` | Enable/disable antiflood |
+| `/filter` | Add/remove filters |
+| `/blocklist` | Manage blocklist |
+| `/rules` | Show group rules |
+| `/setrules` | Set group rules |
+| `/note` | Manage notes |
+| `/promote` | Promote user to admin |
+| `/demote` | Remove admin rights |
+| `/staff` | List all admins |
+| `/setlang` | Change language |
+| `/settings` | Bot settings |
+
+## 🌐 Supported Languages
+
+- English
+- Hebrew
+- Arabic
+- Spanish
+- Russian
+- And 30+ more...
+
+
+## 📝 License
+
 MIT License
+
+## 👨‍💻 Developed by
+
+**Mira AI** - Your personal AI assistant

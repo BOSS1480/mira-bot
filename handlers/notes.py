@@ -5,9 +5,8 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from database import Notes, get_session
 from sqlalchemy import select, delete
-import time
 
-# Note command - get a note
+# Notes command
 @Client.on_message(filters.command("note") & filters.group)
 async def note_handler(client: Client, message: Message):
     """Get a note"""
@@ -69,8 +68,8 @@ async def add_note_handler(client: Client, message: Message):
         if existing:
             existing.content = content
         else:
-            new_note = Notes(chat_id=chat_id, name=note_name, content=content)
-            session.add(new_note)
+            note = Notes(chat_id=chat_id, name=note_name, content=content)
+            session.add(note)
         
         await session.commit()
         await message.reply(f"✅ Note '{note_name}' saved!")
@@ -108,7 +107,7 @@ async def rm_note_handler(client: Client, message: Message):
         break
 
 # List notes command
-@Client.on_message(filters.command("notes") & filters.group)
+@Client.on_message(filters.command("listnotes") & filters.group)
 async def list_notes_handler(client: Client, message: Message):
     """List all notes"""
     chat_id = message.chat.id
@@ -119,11 +118,11 @@ async def list_notes_handler(client: Client, message: Message):
         )
         notes = result.scalars().all()
         
-        if notes:
-            text = "📝 Notes:\n\n"
-            for n in notes:
-                text += f"• {n.name}\n"
-            await message.reply(text)
-        else:
+        if not notes:
             await message.reply("No notes saved!")
+        else:
+            text = "📝 *Notes:*\n\n"
+            for note in notes:
+                text += f"• {note.name}\n"
+            await message.reply(text)
         break

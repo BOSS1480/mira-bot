@@ -5,9 +5,47 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from database import ChatSettings, get_session
 from sqlalchemy import select
-from config import LANGUAGES
 
-# Set language command
+# Languages supported
+LANGUAGES = {
+    "en": "English",
+    "he": "Hebrew",
+    "ar": "Arabic",
+    "es": "Spanish",
+    "ru": "Russian",
+    "fr": "French",
+    "de": "German",
+    "it": "Italian",
+    "pt": "Portuguese",
+    "tr": "Turkish",
+    "zh": "Chinese",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "hi": "Hindi",
+    "th": "Thai",
+    "vi": "Vietnamese",
+    "id": "Indonesian",
+    "ms": "Malay",
+    "fa": "Persian",
+    "ur": "Urdu",
+    "bn": "Bengali",
+    "ta": "Tamil",
+    "te": "Telugu",
+    "ml": "Malayalam",
+    "kn": "Kannada",
+    "gu": "Gujarati",
+    "mr": "Marathi",
+    "pa": "Punjabi",
+    "uk": "Ukrainian",
+    "pl": "Polish",
+    "nl": "Dutch",
+    "sv": "Swedish",
+    "da": "Danish",
+    "no": "Norwegian",
+    "fi": "Finnish",
+}
+
+# Setlang command
 @Client.on_message(filters.command("setlang") & filters.group)
 async def setlang_handler(client: Client, message: Message):
     """Set bot language"""
@@ -22,10 +60,9 @@ async def setlang_handler(client: Client, message: Message):
         return
     
     if len(message.command) > 1:
-        lang = message.command[1]
+        lang = message.command[1].lower()
     else:
-        # Show available languages
-        text = "🌐 Available languages:\n\n"
+        text = "🌐 *Available Languages:*\n\n"
         for code, name in LANGUAGES.items():
             text += f"• {code} - {name}\n"
         text += "\nUsage: /setlang <code>"
@@ -43,16 +80,16 @@ async def setlang_handler(client: Client, message: Message):
         settings = result.scalar_one_or_none()
         
         if not settings:
-            settings = ChatSettings(chat_id=chat_id, language=lang)
+            settings = ChatSettings(chat_id=chat_id, lang=lang)
             session.add(settings)
         else:
-            settings.language = lang
+            settings.lang = lang
         
         await session.commit()
         await message.reply(f"✅ Language set to {LANGUAGES[lang]}!")
         break
 
-# Language info command
+# Lang command (show current language)
 @Client.on_message(filters.command("lang") & filters.group)
 async def lang_handler(client: Client, message: Message):
     """Show current language"""
@@ -64,9 +101,6 @@ async def lang_handler(client: Client, message: Message):
         )
         settings = result.scalar_one_or_none()
         
-        if settings and settings.language:
-            lang_name = LANGUAGES.get(settings.language, settings.language)
-            await message.reply(f"🌐 Current language: {lang_name}")
-        else:
-            await message.reply("🌐 Language: English (default)")
+        lang = settings.lang if settings else "en"
+        await message.reply(f"🌐 Current language: {LANGUAGES.get(lang, 'English')}")
         break

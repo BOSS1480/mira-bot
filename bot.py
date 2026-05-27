@@ -1,24 +1,18 @@
 \"""
 Mira Bot - Telegram Group Management Bot
-Main entry point
+Main entry point - MissRose inspired
 """
 import logging
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
+
 from config import BOT_TOKEN
 from database import init_db
 from handlers import (
-    moderation,
-    welcome,
-    antiflood,
-    filters as filter_handler,
-    rules,
-    notes,
-    staff,
-    settings,
-    language
+    moderation, welcome, antiflood, filters as filter_handler,
+    rules, notes, staff, settings, language
 )
 
 # Setup logging
@@ -43,6 +37,7 @@ def register_handlers():
     app.add_handler(filters.command("start") & filters.private, settings.start_handler)
     app.add_handler(filters.command("help"), settings.help_handler)
     app.add_handler(filters.command("id"), settings.id_handler)
+    app.add_handler(filters.command("info"), settings.info_handler)
     
     # Moderation handlers
     app.add_handler(moderation.ban_handler)
@@ -54,6 +49,7 @@ def register_handlers():
     app.add_handler(moderation.warnings_handler)
     app.add_handler(moderation.clearwarnings_handler)
     app.add_handler(moderation.purge_handler)
+    app.add_handler(moderation.report_handler)
     
     # Welcome/Goodbye handlers
     app.add_handler(welcome.welcome_handler)

@@ -5,7 +5,6 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from database import ChatSettings, get_session
 from sqlalchemy import select
-import time
 
 # Helper to format welcome/goodbye message
 def format_message(text: str, user, chat) -> str:
@@ -16,8 +15,7 @@ def format_message(text: str, user, chat) -> str:
         "{fullname}": f"{user.first_name or ''} {user.last_name or ''}".strip(),
         "{username}": f"@{user.username}" if user.username else "no username",
         "{chatname}": chat.title or "this chat",
-        "{userid}": str(user.id),
-        "{id}": str(user.id)
+        "{userid}": str(user.id)
     }
     
     for placeholder, value in replacements.items():
@@ -90,7 +88,7 @@ async def set_welcome_handler(client: Client, message: Message):
     if len(message.command) > 1:
         welcome_text = message.text.split(None, 1)[1]
     else:
-        await message.reply("Usage: /setwelcome <message>\n\nPlaceholders: {first}, {last}, {fullname}, {username}, {chatname}, {userid}")
+        await message.reply("Usage: /setwelcome <message>\n\nPlaceholders: {first}, {last}, {fullname}, {username}, {chatname}")
         return
     
     # Save to database

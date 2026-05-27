@@ -5,7 +5,6 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from database import Filters, Blocklist, ChatSettings, get_session
 from sqlalchemy import select, delete
-import asyncio
 
 # Filter handler - respond to keywords
 @Client.on_message(filters.group & filters.text)
@@ -44,6 +43,7 @@ async def filter_handler(client: Client, message: Message):
                 break
         
         break
+
 
 # Add filter command
 @Client.on_message(filters.command("addfilter") & filters.group)
@@ -117,19 +117,19 @@ async def list_filters_handler(client: Client, message: Message):
         )
         filters_list = result.scalars().all()
         
-        if filters_list:
-            text = "📝 Filters:\n\n"
-            for f in filters_list:
-                text += f"• {f.keyword}: {f.response}\n"
-            await message.reply(text)
-        else:
+        if not filters_list:
             await message.reply("No filters set!")
+        else:
+            text = "📋 *Filters:*\n\n"
+            for f in filters_list:
+                text += f"• `{f.keyword}` → {f.response}\n"
+            await message.reply(text)
         break
 
 # Blocklist command
 @Client.on_message(filters.command("blocklist") & filters.group)
 async def blocklist_handler(client: Client, message: Message):
-    """Add/remove/list blocklist words"""
+    """Manage blocklist"""
     if not message.from_user:
         return
     
@@ -140,36 +140,24 @@ async def blocklist_handler(client: Client, message: Message):
         await message.reply("🚫 Only admins can use this command!")
         return
     
-    if len(message.command) == 1:
-        # List blocklist
-        async for session in get_session():
-            result = await session.execute(
-                select(Blocklist).where(Blocklist.chat_id == chat_id)
-            )
-            blocklist = result.scalars().all()
-            
-            if blocklist:
-                text = "🚫 Blocklist:\n\n"
-                for b in blocklist:
-                    text += f"• {b.word}\n"
-                await message.reply(text)
-            else:
-                await message.reply("Blocklist is empty!")
-            break
-    
-    action = message.command[1] if len(message.command) > 1 else ""
-    
-    if action == "add" and len(message.command) > 2:
+    # Parse subcommand
+    if len(message.command) > 2:
+        subcmd = message.command[1]
         word = message.command[2]
-        async for session in get_session():
-            new_word = Blocklist(chat_id=chat_id, word=word)
-            session.add(new_word)
+    elif len(message.command) > 1:
+        subcmd = message.command[1]
+        word = None
+    else:
+        await message.reply("Usage: /blocklist add/remove <word>")
+        return
+    
+    async for session in get_session():
+        if subcmd == "add" and word:
+            blocked = Blocklist(chat_id=chat_id, word=word)
+            session.add(blocked)
             await session.commit()
             await message.reply(f"✅ Added '{word}' to blocklist!")
-            break
-    elif action == "del" and len(message.command) > 2:
-        word = message.command[2]
-        async for session in get_session():
+        elif subcmd == "remove" and word:
             await session.execute(
                 delete(Blocklist).where(
                     Blocklist.chat_id == chat_id,
@@ -178,6 +166,18 @@ async def blocklist_handler(client: Client, message: Message):
             )
             await session.commit()
             await message.reply(f"✅ Removed '{word}' from blocklist!")
-            break
-    else:
-        await message.reply("Usage:\n/blocklist - list\n/blocklist add <word>\n/blocklist del <word>")
+        elif subcmd == "list":
+            result = await session.execute(
+                select(Blocklist).where(Blocklist.chat_id == chat_id)
+            )
+            blocklist = result.scalars().all()
+            if not blocklist:
+                await message.reply("Blocklist is empty!")
+            else:
+                text = "🚫 *Blocklist:*\n\n"
+                for b in blocklist:
+                    text += f"• `{b.word}`\n"
+                await message.reply(text)
+        else:
+            await message.reply("Usage: /blocklist add/remove/list <word>")
+        break
