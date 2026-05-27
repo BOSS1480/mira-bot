@@ -1,0 +1,9 @@
+pyrogram
+tgcrypto
+pyromod
+sqlalchemy
+aiosqlite
+python-dotenv
+APScheduler
+markdown2
+ Pillow
