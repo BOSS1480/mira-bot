@@ -1,95 +1,47 @@
+\"""
+Mira Bot Configuration
+"""
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
-
-# Bot Configuration
-BOT_TOKEN = os.getenv("BOT_TOKEN", "")
-BOT_ID = ""
+# Bot Settings
+BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
 BOT_NAME = "Mira Bot"
-BOT_USERNAME = ""
+BOT_USERNAME = "mira_bot"
 
 # Database
-DB_URI = "sqlite:///mira.db"
+DATABASE_URL = "sqlite+aiosqlite:///bot.db"
 
-# Channels
-LOG_CHANNEL = os.getenv("LOG_CHANNEL", "")
-
-# Settings
-SUPPORT_GROUP = os.getenv("SUPPORT_GROUP", "")
-SUPPORT_CHANNEL = os.getenv("SUPPORT_CHANNEL", "")
-
-# Languages
-DEFAULT_LANGUAGE = "he"
-
-# Flood
-FLOOD_LIMIT = 5
-FLOOD_TIME = 6
-
-# Warnings
+# Default Settings
+DEFAULT_WELCOME = "Welcome {first} to {chatname}!"
+DEFAULT_GOODBYE = "Goodbye {first}!"
 MAX_WARNINGS = 3
 
-# Anti-Spam
-ANTISPAM_SENSITIVITY = 50
+# Antiflood Settings
+ANTIFLOOD_LIMIT = 5
+ANTIFLOOD_TIME = 5  # seconds
 
-# Welcome
-WELCOME_ENABLED = True
-WELCOME_MESSAGES = [
-    "Welcome {first}!",
-    "Hello {first}! Welcome to {group}",
-]
+# AntiRaid Settings
+RAID_TIME = 10  # seconds
+RAID_COUNT = 10  # users joining in that time
 
-# Admin
-ADMINS = []  # Add admin user IDs here
+# CAPTCHA Settings
+CAPTCHA_TIME = 120  # seconds to solve CAPTCHA
 
-# Group Settings
-GROUP_LOCKS = {
-    "stickers": False,
-    "photos": False,
-    "videos": False,
-    "documents": False,
-    "games": False,
-    "inline": False,
-    "polls": False,
-    "voice": False,
-    "videochat": False,
-    "location": False,
-    "contacts": False,
-    "rtl": False,
-    "button": False,
-    "eggs": False,
-}
-
-# Blocklist
-BLOCK_WORD = []
-SPAM_WORDS = []
-
-# Notes
-NOTES = {}
-
-# Filters
-FILTERS = {}
-
-# Chatbot
-CHATBOT_ENABLED = False
-CHATBOT_MODE = "false"
-
-# AI
-AI_ENABLED = False
-AI_API_KEY = ""
-
-# Captcha
-CAPTCHA_ENABLED = False
-CAPTCHA_TIME = 60
-
-# Rules
-RULES_DEFAULT = "No rules yet."
-
-# Staff
-STAFF_ROLES = {
-    "owner": 5,
-    "admin": 4,
-    "moderator": 3,
-    "vip": 2,
-    "member": 1,
+# Supported Languages
+LANGUAGES = {
+    "en": "English",
+    "he": "Hebrew",
+    "ar": "Arabic",
+    "es": "Spanish",
+    "fr": "French",
+    "de": "German",
+    "ru": "Russian",
+    "it": "Italian",
+    "pt": "Portuguese",
+    "tr": "Turkish",
+    "id": "Indonesian",
+    "hi": "Hindi",
+    "zh": "Chinese",
+    "ja": "Japanese",
+    "ko": "Korean",
 }

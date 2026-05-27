@@ -1,143 +1,79 @@
-# 🤖 Mira Bot
+# Mira Bot - MissRose Clone
 
-Telegram Group Management Bot - MissRose Inspired
+A powerful Telegram group management bot inspired by MissRose.
 
 ## Features
 
-### 👮 Moderation
-- **Ban/Unban** - Ban or unban users
-- **Kick** - Kick users from group
-- **Mute/Unmute** - Mute or unmute users
-- **Warn** - Warn users
-- **Promote/Demote** - Manage admins
+### Moderation
+- **Ban/Unban** - Ban or unban users from the group
+- **Kick** - Remove a user from the group
+- **Mute/Unmute** - Mute or unmute users temporarily
+- **Warn/Warnings** - Warn users and track violations
+- **Purge** - Delete multiple messages at once
 
-### 🔒 Locks
-- Lock stickers, photos, videos, documents, games, inline, polls, voice, videochat, location, contacts, RTL, buttons, eggs
+### Protection
+- **Antiflood** - Prevent message flooding
+- **AntiRaid** - Protect against mass join attacks
+- **CAPTCHA** - Verify new members
 
-### 📝 Notes & Filters
-- Save notes for quick access
-- Set keyword filters with auto-replies
+### Group Management
+- **Welcome/Goodbye** - Custom welcome and goodbye messages
+- **Rules** - Set and display group rules
+- **Filters** - Auto-respond to keywords
+- **Blocklist** - Block certain words
+- **Notes** - Save notes for users
 
-### ⚙️ Settings
-- Anti-flood protection
-- CAPTCHA verification
-- Welcome messages
-- Group rules
-- Multi-language support
-
-### 🚫 Blocklist
-- Block specific words in group
+### Additional
+- **Staff** - Manage group staff
+- **Promote/Demote** - Add or remove admins
+- **Settings** - Configure bot behavior
+- **Multiple Languages** - Support for 30+ languages
 
 ## Commands
 
 ### Basic
 - `/start` - Start the bot
-- `/help` - Show help
-- `/id` - Get IDs
-- `/info` - Get user info
-- `/ping` - Check bot status
+- `/help` - Show help menu
+- `/id` - Get chat/user ID
 
-### Admin
-- `/promote` - Promote user
-- `/demote` - Demote user
-- `/ban` - Ban user
-- `/unban` - Unban user
-- `/kick` - Kick user
-- `/mute` - Mute user
-- `/unmute` - Unmute user
-- `/warn` - Warn user
-- `/warns` - Get user warns
-- `/clearwarns` - Clear warns
-- `/pin` - Pin message
-- `/unpin` - Unpin message
+### Moderation
+- `/ban` - Ban a user
+- `/unban` - Unban a user
+- `/kick` - Kick a user
+- `/mute` - Mute a user
+- `/unmute` - Unmute a user
+- `/warn` - Warn a user
+- `/warnings` - Check user warnings
+- `/clearwarnings` - Clear warnings
 - `/purge` - Delete messages
 
-### Locks
-- `/lock <type>` - Lock feature
-- `/unlock <type>` - Unlock feature
-- `/locks` - Show all locks
-- `/grouplock` - Lock all
-- `/groupunlock` - Unlock all
-
-### Notes & Filters
-- `/note` - Manage notes
-- `/filter` - Manage filters
-- `/filters` - List filters
-
 ### Settings
-- `/rules` - Show rules
-- `/setrules` - Set rules
-- `/welcome` - Set welcome
-- `/antiflood` - Anti-flood settings
-- `/captcha` - CAPTCHA settings
+- `/antiflood` - Toggle antiflood
+- `/welcome` - Set welcome message
+- `/goodbye` - Set goodbye message
+- `/setrules` - Set group rules
+- `/addfilter` - Add a filter
+- `/rmfilter` - Remove a filter
 - `/setlang` - Change language
-- `/settings` - Show settings
-
-### Blocklist
-- `/blocklist` - Show blocklist
-- `/addblock` - Add to blocklist
-- `/unblock` - Remove from blocklist
-
-
-### Staff
-- `/staff` - Show staff
-- `/adminlist` - Admin list
 
 ## Installation
 
-1. Clone the repository:
 ```bash
-git clone https://github.com/BOSS1480/mira-bot.git
-cd mira-bot
-```
-
-2. Install dependencies:
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
 
-3. Configure environment:
-```bash
-cp .env.example .env
-# Edit .env with your bot token
-```
+# Configure bot
+Edit config.py and add your BOT_TOKEN
 
-4. Run the bot:
-```bash
+# Run the bot
 python bot.py
 ```
 
-## Docker
-
-```bash
-docker build -t mira-bot .
-docker run -d mira-bot
-```
-
-## Environment Variables
-
-- `BOT_TOKEN` - Your Telegram bot token
-- `API_ID` - Your Telegram API ID
-- `API_HASH` - Your Telegram API hash
-- `LOG_CHANNEL` - Log channel ID
-- `SUPPORT_GROUP` - Support group username
-- `SUPPORT_CHANNEL` - Support channel username
-
-## Languages Supported
-
-- 🇮🇱 Hebrew (he)
-- 🇬🇧 English (en)
-- 🇸🇦 Arabic (ar)
-- 🇪🇸 Spanish (es)
-- 🇫🇷 French (fr)
-- 🇩🇪 German (de)
-- 🇷🇺 Russian (ru)
+## Requirements
+- Python 3.8+
+- pyrogram
+- tgcrypto
+- aiosqlite
 
 ## License
-
-
 MIT License
-
-## Credits
-
-Inspired by [MissRose Bot](https://missrose.org)

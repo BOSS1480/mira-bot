@@ -1,9 +1,5 @@
-pyrogram
+pyrogram>=2.0.0
 tgcrypto
-pyromod
-sqlalchemy
+pyyaml
+sqlalchemy[asyncio]
 aiosqlite
-python-dotenv
-APScheduler
-markdown2
- Pillow
