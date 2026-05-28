@@ -1,4 +1,4 @@
-\"""
+"""
 Moderation handlers - ban, mute, kick, warn, purge, report
 """
 from pyrogram import Client, filters
@@ -7,6 +7,7 @@ from sqlalchemy import select
 from database import ChatSettings, UserWarnings, get_session
 import asyncio
 import time
+from utils import tr, get_lang
 
 # Helper to check if user is admin
 async def is_admin(chat_id: int, user_id: int, app: Client) -> bool:
@@ -40,10 +41,9 @@ async def ban_handler(client: Client, message: Message):
     
     chat_id = message.chat.id
     if not await is_admin(chat_id, message.from_user.id, client):
-        await message.reply("🚫 Only admins can use this command!")
+        await message.reply(await tr(chat_id, "only_admins"))
         return
     
-    # Get user to ban
     if message.reply_to_message:
         user_id = message.reply_to_message.from_user.id
         user_name = message.reply_to_message.from_user.first_name or "User"
@@ -52,22 +52,21 @@ async def ban_handler(client: Client, message: Message):
             user_id = int(message.command[1])
             user_name = "User"
         except:
-            await message.reply("Invalid user ID")
+            await message.reply(await tr(chat_id, "invalid_user"))
             return
     else:
-        await message.reply("Reply to a user or provide user ID")
+        await message.reply(await tr(chat_id, "reply_or_id"))
         return
     
-    # Check if trying to ban admin
     if await is_admin(chat_id, user_id, client):
-        await message.reply("Cannot ban an admin!")
+        await message.reply(await tr(chat_id, "cannot_ban_admin"))
         return
     
     try:
         await client.ban_chat_member(chat_id, user_id)
-        await message.reply(f"🚫 Banned {user_name}!")
+        await message.reply(await tr(chat_id, "banned", name=user_name))
     except Exception as e:
-        await message.reply(f"Error: {e}")
+        await message.reply(await tr(chat_id, "error", error=str(e)))
 
 # Unban command
 @Client.on_message(filters.command("unban") & filters.group)
@@ -78,7 +77,7 @@ async def unban_handler(client: Client, message: Message):
     
     chat_id = message.chat.id
     if not await is_admin(chat_id, message.from_user.id, client):
-        await message.reply("🚫 Only admins can use this command!")
+        await message.reply(await tr(chat_id, "only_admins"))
         return
     
     if message.reply_to_message:
@@ -87,17 +86,17 @@ async def unban_handler(client: Client, message: Message):
         try:
             user_id = int(message.command[1])
         except:
-            await message.reply("Invalid user ID")
+            await message.reply(await tr(chat_id, "invalid_user"))
             return
     else:
-        await message.reply("Reply to a user or provide user ID")
+        await message.reply(await tr(chat_id, "reply_or_id"))
         return
     
     try:
         await client.unban_chat_member(chat_id, user_id)
-        await message.reply("✅ User unbanned!")
+        await message.reply(await tr(chat_id, "unbanned"))
     except Exception as e:
-        await message.reply(f"Error: {e}")
+        await message.reply(await tr(chat_id, "error", error=str(e)))
 
 # Mute command
 @Client.on_message(filters.command("mute") & filters.group)
@@ -108,11 +107,10 @@ async def mute_handler(client: Client, message: Message):
     
     chat_id = message.chat.id
     if not await is_admin(chat_id, message.from_user.id, client):
-        await message.reply("🚫 Only admins can use this command!")
+        await message.reply(await tr(chat_id, "only_admins"))
         return
     
-    # Parse duration
-    duration = 60  # default 60 minutes
+    duration = 60
     if len(message.command) > 2:
         try:
             duration = int(message.command[2])
@@ -127,10 +125,10 @@ async def mute_handler(client: Client, message: Message):
             user_id = int(message.command[1])
             user_name = "User"
         except:
-            await message.reply("Invalid user ID")
+            await message.reply(await tr(chat_id, "invalid_user"))
             return
     else:
-        await message.reply("Reply to a user or provide user ID")
+        await message.reply(await tr(chat_id, "reply_or_id"))
         return
     
     try:
@@ -140,9 +138,9 @@ async def mute_handler(client: Client, message: Message):
             ChatPermissions(can_send_messages=False),
             until_date=until_date
         )
-        await message.reply(f"🔇 Muted {user_name} for {duration} minutes!")
+        await message.reply(await tr(chat_id, "muted", name=user_name, minutes=duration))
     except Exception as e:
-        await message.reply(f"Error: {e}")
+        await message.reply(await tr(chat_id, "error", error=str(e)))
 
 # Unmute command
 @Client.on_message(filters.command("unmute") & filters.group)
@@ -153,7 +151,7 @@ async def unmute_handler(client: Client, message: Message):
     
     chat_id = message.chat.id
     if not await is_admin(chat_id, message.from_user.id, client):
-        await message.reply("🚫 Only admins can use this command!")
+        await message.reply(await tr(chat_id, "only_admins"))
         return
     
     if message.reply_to_message:
@@ -162,10 +160,10 @@ async def unmute_handler(client: Client, message: Message):
         try:
             user_id = int(message.command[1])
         except:
-            await message.reply("Invalid user ID")
+            await message.reply(await tr(chat_id, "invalid_user"))
             return
     else:
-        await message.reply("Reply to a user or provide user ID")
+        await message.reply(await tr(chat_id, "reply_or_id"))
         return
     
     try:
@@ -178,9 +176,9 @@ async def unmute_handler(client: Client, message: Message):
                 can_add_web_page_previews=True
             )
         )
-        await message.reply("✅ User unmuted!")
+        await message.reply(await tr(chat_id, "unmuted"))
     except Exception as e:
-        await message.reply(f"Error: {e}")
+        await message.reply(await tr(chat_id, "error", error=str(e)))
 
 # Kick command
 @Client.on_message(filters.command("kick") & filters.group)
@@ -191,7 +189,7 @@ async def kick_handler(client: Client, message: Message):
     
     chat_id = message.chat.id
     if not await is_admin(chat_id, message.from_user.id, client):
-        await message.reply("🚫 Only admins can use this command!")
+        await message.reply(await tr(chat_id, "only_admins"))
         return
     
     if message.reply_to_message:
@@ -202,18 +200,18 @@ async def kick_handler(client: Client, message: Message):
             user_id = int(message.command[1])
             user_name = "User"
         except:
-            await message.reply("Invalid user ID")
+            await message.reply(await tr(chat_id, "invalid_user"))
             return
     else:
-        await message.reply("Reply to a user or provide user ID")
+        await message.reply(await tr(chat_id, "reply_or_id"))
         return
     
     try:
         await client.ban_chat_member(chat_id, user_id)
         await client.unban_chat_member(chat_id, user_id)
-        await message.reply(f"👢 Kicked {user_name}!")
+        await message.reply(await tr(chat_id, "kicked", name=user_name))
     except Exception as e:
-        await message.reply(f"Error: {e}")
+        await message.reply(await tr(chat_id, "error", error=str(e)))
 
 # Warn command
 @Client.on_message(filters.command("warn") & filters.group)
@@ -224,7 +222,7 @@ async def warn_handler(client: Client, message: Message):
     
     chat_id = message.chat.id
     if not await is_admin(chat_id, message.from_user.id, client):
-        await message.reply("🚫 Only admins can use this command!")
+        await message.reply(await tr(chat_id, "only_admins"))
         return
     
     reason = "No reason"
@@ -239,13 +237,12 @@ async def warn_handler(client: Client, message: Message):
             user_id = int(message.command[1])
             user_name = "User"
         except:
-            await message.reply("Invalid user ID")
+            await message.reply(await tr(chat_id, "invalid_user"))
             return
     else:
-        await message.reply("Reply to a user or provide user ID")
+        await message.reply(await tr(chat_id, "reply_or_id"))
         return
     
-    # Save warning to database
     async for session in get_session():
         warning = UserWarnings(
             chat_id=chat_id,
@@ -256,7 +253,6 @@ async def warn_handler(client: Client, message: Message):
         session.add(warning)
         await session.commit()
         
-        # Count warnings
         result = await session.execute(
             select(UserWarnings).where(
                 UserWarnings.chat_id == chat_id,
@@ -269,19 +265,18 @@ async def warn_handler(client: Client, message: Message):
         max_warns = 3
         
         if warn_count >= max_warns:
-            # Ban the user
             try:
                 await client.ban_chat_member(chat_id, user_id)
                 await message.reply(
-                    f"⚠️ {user_name} reached {max_warns} warnings and was banned!"
+                    await tr(chat_id, "max_warnings", name=user_name, max=max_warns)
                 )
             except:
                 await message.reply(
-                    f"⚠️ {user_name} has {warn_count}/{max_warns} warnings!"
+                    await tr(chat_id, "warned", name=user_name, current=warn_count, max=max_warns, reason=reason)
                 )
         else:
             await message.reply(
-                f"⚠️ {user_name} warned! ({warn_count}/{max_warns})\nReason: {reason}"
+                await tr(chat_id, "warned", name=user_name, current=warn_count, max=max_warns, reason=reason)
             )
         break
 
@@ -302,10 +297,10 @@ async def warnings_handler(client: Client, message: Message):
             user_id = int(message.command[1])
             user_name = "User"
         except:
-            await message.reply("Invalid user ID")
+            await message.reply(await tr(chat_id, "invalid_user"))
             return
     else:
-        await message.reply("Reply to a user or provide user ID")
+        await message.reply(await tr(chat_id, "reply_or_id"))
         return
     
     async for session in get_session():
@@ -319,13 +314,14 @@ async def warnings_handler(client: Client, message: Message):
         warn_count = len(warnings)
         
         if warn_count == 0:
-            await message.reply(f"✅ {user_name} has no warnings!")
+            await message.reply(await tr(chat_id, "no_warnings", name=user_name))
         else:
-            text = f"⚠️ *Warnings for {user_name}:*\n\n"
+            text = ""
             for w in warnings:
                 text += f"• {w.reason}\n"
-            text += f"\nTotal: {warn_count}/3"
-            await message.reply(text)
+            await message.reply(
+                await tr(chat_id, "warnings_list", name=user_name, text=text, current=warn_count, max=3)
+            )
         break
 
 # Clearwarnings command
@@ -337,7 +333,7 @@ async def clearwarnings_handler(client: Client, message: Message):
     
     chat_id = message.chat.id
     if not await is_admin(chat_id, message.from_user.id, client):
-        await message.reply("🚫 Only admins can use this command!")
+        await message.reply(await tr(chat_id, "only_admins"))
         return
     
     if message.reply_to_message:
@@ -348,10 +344,10 @@ async def clearwarnings_handler(client: Client, message: Message):
             user_id = int(message.command[1])
             user_name = "User"
         except:
-            await message.reply("Invalid user ID")
+            await message.reply(await tr(chat_id, "invalid_user"))
             return
     else:
-        await message.reply("Reply to a user or provide user ID")
+        await message.reply(await tr(chat_id, "reply_or_id"))
         return
     
     async for session in get_session():
@@ -362,10 +358,10 @@ async def clearwarnings_handler(client: Client, message: Message):
             )
         )
         await session.commit()
-        await message.reply(f"✅ Cleared all warnings for {user_name}!")
+        await message.reply(await tr(chat_id, "clearwarnings_done", name=user_name))
         break
 
-# Purge command (delete messages)
+# Purge command
 @Client.on_message(filters.command("purge") & filters.group)
 async def purge_handler(client: Client, message: Message):
     """Delete messages from replied message"""
@@ -374,20 +370,19 @@ async def purge_handler(client: Client, message: Message):
     
     chat_id = message.chat.id
     if not await is_admin(chat_id, message.from_user.id, client):
-        await message.reply("🚫 Only admins can use this command!")
+        await message.reply(await tr(chat_id, "only_admins"))
         return
     
     if not message.reply_to_message:
-        await message.reply("Reply to a message to delete from")
+        await message.reply(await tr(chat_id, "purge_reply"))
         return
     
     try:
-        # Delete messages from replied to current
         message_ids = list(range(message.reply_to_message.id, message.id))
         await client.delete_messages(chat_id, message_ids)
-        await message.reply(f"🗑️ Deleted {len(message_ids)} messages!")
+        await message.reply(await tr(chat_id, "purge_done", count=len(message_ids)))
     except Exception as e:
-        await message.reply(f"Error: {e}")
+        await message.reply(await tr(chat_id, "error", error=str(e)))
 
 # Report command
 @Client.on_message(filters.command("report") & filters.group)
@@ -397,18 +392,7 @@ async def report_handler(client: Client, message: Message):
         return
     
     if not message.reply_to_message:
-        await message.reply("Reply to a message to report")
+        await message.reply(await tr(message.chat.id, "report_reply"))
         return
     
-    reason = "No reason"
-    if len(message.command) > 1:
-        reason = " ".join(message.command[1:])
-    
-    user = message.reply_to_message.from_user
-    chat = message.chat
-    
-    # Notify admins
-    try:
-        await message.reply("✅ User reported to admins!")
-    except:
-        pass
+    await message.reply(await tr(message.chat.id, "reported"))

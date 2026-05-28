@@ -1,4 +1,4 @@
-\"""
+"""
 Mira Bot - Telegram Group Management Bot
 Main entry point - MissRose inspired
 """
@@ -7,13 +7,13 @@ import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
-
-from config import BOT_TOKEN
+from config import API_ID, API_HASH, BOT_TOKEN
 from database import init_db
 from handlers import (
     moderation, welcome, antiflood, filters as filter_handler,
     rules, notes, staff, settings, language
 )
+from utils import get_lang, t
 
 # Setup logging
 logging.basicConfig(
@@ -25,6 +25,8 @@ logger = logging.getLogger(__name__)
 # Create bot client
 app = Client(
     "mira_bot",
+    api_id=API_ID,
+    api_hash=API_HASH,
     bot_token=BOT_TOKEN,
     workdir="."
 )
@@ -35,7 +37,8 @@ def register_handlers():
     
     # Basic handlers
     app.add_handler(filters.command("start") & filters.private, settings.start_handler)
-    app.add_handler(filters.command("help"), settings.help_handler)
+    app.add_handler(filters.command("help") & filters.private, settings.help_handler)
+    app.add_handler(filters.command("help"), settings.group_help_handler)
     app.add_handler(filters.command("id"), settings.id_handler)
     app.add_handler(filters.command("info"), settings.info_handler)
     

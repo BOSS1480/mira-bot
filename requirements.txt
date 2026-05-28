@@ -1,6 +1,7 @@
-pyrogram>=2.0.0
+pyrotgfork>=2.0.0
 tgcrypto
 pyyaml
 sqlalchemy
 aiosqlite
 apprise
+python-dotenv
